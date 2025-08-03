@@ -5,9 +5,11 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL_mixer.h>
+#include <array>
+#include <cstdint>
 
 extern SDL_Window* g_Window;
 extern SDL_Renderer* g_Renderer;
-extern bool g_Display[64][32];
+extern std::array<std::array<bool, 32>, 64> g_Display;
 
 #endif

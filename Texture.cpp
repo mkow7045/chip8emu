@@ -43,10 +43,10 @@ void Texture::updateTexture()
         {
             int pixel_index = h * (pitch / 4) + w;
 
-            if (g_display[w][h])
-                pixel_data[pixel_index] = 0xFFFFFFFF;  
+            if (g_Display[w][h])
+                pixel_data[pixel_index] = 0xFF40FF40FF;
             else
-                pixel_data[pixel_index] = 0xFF000000;
+                pixel_data[pixel_index] = 0xFF101010FF;
         }
     }
     SDL_UnlockTexture(m_Texture);

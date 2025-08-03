@@ -1,19 +1,27 @@
 #include "Common.h"
 #include "Display.h"
 #include "Texture.h"
+#include "Interpreter.h"
 #include <array>
+#include <iostream>
 
 
 SDL_Window* g_Window = nullptr;
 SDL_Renderer* g_Renderer = nullptr;
-bool g_Display[64][32] {};
+std::array<std::array<bool, 32>, 64> g_Display{};
 
 
 
 
 int main(int argc, char* args[])
 {
-	g_display[10][20] = true;
+	std::string ibm{ "ibm.ch8" };
+	Interpreter interprt{ibm};
+	if (!interprt.readFromFile())
+	{
+		return 0;
+	}
+
 	Display d{ 640,480 };
 	Texture texture{};
 	bool quit{ false };
@@ -26,17 +34,18 @@ int main(int argc, char* args[])
 			{
 				quit = true;
 			}
-
-			SDL_SetRenderDrawColor(g_Renderer, 0x00, 0x00, 0x00, 0x00);
-			SDL_RenderClear(g_Renderer);
-
-			texture.updateTexture();
-			texture.render(0, 0);
-
-			SDL_RenderPresent(g_Renderer);
-
 		}
+
+
+		SDL_SetRenderDrawColor(g_Renderer, 0x00, 0x00, 0x00, 0x00);
+		SDL_RenderClear(g_Renderer);
+
+		interprt.executeCycle();
+		texture.updateTexture();
+		texture.render(0, 0);
+
+		SDL_RenderPresent(g_Renderer);
+
 	}
-	
 	return 0;
 }
