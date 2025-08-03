@@ -22,6 +22,18 @@ public:
 
 	uint8_t randomNumber();
 
+	void setKey(uint8_t key);
+
+	void decreaseDT()
+	{
+		--m_DT;
+	}
+
+	void decreaseST()
+	{
+		--m_ST;
+	}
+
 private:
 	std::string m_Path{};
 	std::array<uint8_t, 4096> m_Mem{};
@@ -31,6 +43,9 @@ private:
 	std::array<uint8_t, 16> m_Sprite{};
 	std::array<uint8_t, 16> m_V{};
 	uint16_t m_I{};
+	uint8_t m_DT{};
+	uint8_t m_ST{};
+	std::array<bool, 16> m_Keyboard{};
 };
 
 

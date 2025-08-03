@@ -14,7 +14,7 @@ public:
 	uint8_t y() const { return m_y; }
 	uint8_t n() const { return m_n; }
 	uint8_t nn() const { return m_nn; }
-	uint8_t nnn() const { return m_nnn; }
+	uint16_t nnn() const { return m_nnn; }
 private:
 	uint16_t m_Full{};
 	uint8_t m_Type{};
@@ -22,7 +22,7 @@ private:
 	uint8_t m_y{};
 	uint8_t m_n{};
 	uint8_t m_nn{};
-	uint8_t m_nnn{};
+	uint16_t m_nnn{};
 };
 
 #endif

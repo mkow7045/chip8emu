@@ -16,6 +16,18 @@ Interpreter::Interpreter(std::string& path)
 {
 }
 
+void Interpreter::setKey(uint8_t key)
+{
+	if (m_Keyboard[key] = true)
+	{
+		m_Keyboard[key] = false;
+	}
+	else
+	{
+		m_Keyboard[key] = true;
+	}
+}
+
 bool Interpreter::readFromFile()
 {
 	constexpr size_t programStart{ 0x200 };
@@ -68,6 +80,8 @@ uint8_t Interpreter::randomNumber()
 void Interpreter::executeCycle()
 {
 	Opcode opcode{ fetchOpcode(m_Mem[m_PC], m_Mem[m_PC + 1]) };
+
+	std::cerr << "0x" << std::hex << std::setw(4) << std::setfill('0') << opcode.full() << " ON BYTE NUMBER " << std::dec << m_PC << '\n';
 	
 	bool incrementPC{true};
 
@@ -95,8 +109,9 @@ void Interpreter::executeCycle()
 		break;
 	case 0x2:
 		++m_SP;
-		m_Stack[m_SP] = m_PC;
+		m_Stack[m_SP] = m_PC+2;
 		m_PC = opcode.nnn();
+		incrementPC = false;
 		break;
 	case 0x3:
 		if (m_V[opcode.x()] == opcode.nn())
@@ -203,43 +218,45 @@ void Interpreter::executeCycle()
 		break;
 
 	case 0x9:
-		if (m_V[opcode.x()] == m_V[opcode.y()])
+		if (m_V[opcode.x()] != m_V[opcode.y()])
 		{
-			incrementPC = false;
+			m_PC += 2;
 		}
 		break;
 
 	case 0xA:
-		m_I = opcode.nnn() + 0x200;
+		m_I = opcode.nnn();
 		break;
-	
+
 	case 0xB:
 		m_PC = opcode.nnn() + m_V[0x0];
 		break;
-	
+
 	case 0xC:
 		temp8 = randomNumber();
 		temp8 &= opcode.nn();
 		m_V[opcode.x()] = temp8;
 		break;
-	
-	case 0xD:
 
+	case 0xD:
+	{
 		for (int index{ 0 }; index < opcode.n(); ++index)
 		{
+			if (m_I + index >= m_Mem.size()) break;
 			m_Sprite[index] = m_Mem[m_I + index];
 		}
-
-
-		
 		uint8_t yCord{ m_V[opcode.y()] };
-
 		for (int index{ 0 }; index < opcode.n(); ++index)
 		{
 			uint8_t xCord{ m_V[opcode.x()] };
-			for (int bit{ 7 }; bit >= 0; --bit) 
+			for (int bit{ 7 }; bit >= 0; --bit)
 			{
+				bool pixelChanged{ g_Display[xCord][yCord] };
 				g_Display[xCord][yCord] ^= (1 << bit) & m_Sprite[index];
+				if (pixelChanged != g_Display[xCord][yCord])
+				{
+					m_V[0xF] = 1;
+				}
 				if (xCord > 63)
 				{
 					xCord = 0;
@@ -249,7 +266,7 @@ void Interpreter::executeCycle()
 					++xCord;
 				}
 			}
-			if(yCord > 31)
+			if (yCord > 31)
 			{
 				yCord = 0;
 			}
@@ -258,7 +275,71 @@ void Interpreter::executeCycle()
 				++yCord;
 			}
 		}
+	}
+	break;
+
+	case 0xE:
+		switch (opcode.nn())
+		{
+		case(0x9E):
+			if (m_Keyboard[m_V[opcode.x()]])
+				m_PC += 2;
+			break;
+		case(0xA1):
+			if (!m_Keyboard[m_V[opcode.x()]])
+				m_PC += 2;
+			break;
+		}
 		break;
+	case 0xF:
+		switch (opcode.nn())
+		{
+		case 0x07:
+			m_V[opcode.x()] = m_DT;
+			break;
+		case 0x0A:
+		{
+			incrementPC = false;
+			for (int index{ 0 }; index < m_Keyboard.size(); ++index)
+			{
+				if (m_Keyboard[index] == true)
+				{
+					m_V[opcode.x()] = index;
+					incrementPC = true;
+				}
+			}
+		}
+		break;
+		case 0x15:
+			m_DT = m_V[opcode.x()];
+			break;
+		case 0x18:
+			m_ST = m_V[opcode.x()];
+			break;
+		case 0x1E:
+			m_I += m_V[opcode.x()];
+			break;
+		case 0x29:
+			// add this later
+			break;
+		case 0x33:
+			m_Mem[m_I] = (m_V[opcode.x()] / 100) % 10;
+			m_Mem[m_I + 1] = (m_V[opcode.x()] / 10) % 10;
+			m_Mem[m_I + 2] = m_V[opcode.x()] % 10;
+			break;
+		case 0x55:
+			for (int index{ 0 }; index < opcode.x(); ++index)
+			{
+				m_Mem[m_I + index] = m_V[index];
+			}
+			break;
+		case 0x65:
+			for (int index{ 0 }; index < opcode.x(); ++index)
+			{
+				m_V[index] = m_Mem[m_I + index];
+			}
+			break;
+		}
 	}
 
 
