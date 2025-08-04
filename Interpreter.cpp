@@ -18,13 +18,13 @@ Interpreter::Interpreter(std::string& path)
 
 void Interpreter::setKey(uint8_t key)
 {
-	if (m_Keyboard[key] = true)
+	if (m_Keyboard[key] == false)
 	{
-		m_Keyboard[key] = false;
+		m_Keyboard[key] = true;
 	}
 	else
 	{
-		m_Keyboard[key] = true;
+		m_Keyboard[key] = false;
 	}
 }
 
@@ -77,11 +77,11 @@ uint8_t Interpreter::randomNumber()
 	return die255(mt);
 }
 
-void Interpreter::executeCycle()
+void Interpreter::executeCycles(int cycles)
 {
 	Opcode opcode{ fetchOpcode(m_Mem[m_PC], m_Mem[m_PC + 1]) };
 
-	std::cerr << "0x" << std::hex << std::setw(4) << std::setfill('0') << opcode.full() << " ON BYTE NUMBER " << std::dec << m_PC << '\n';
+	// std::cerr << "0x" << std::hex << std::setw(4) << std::setfill('0') << opcode.full() << " ON BYTE NUMBER " << std::dec << m_PC << '\n';
 	
 	bool incrementPC{true};
 
@@ -257,7 +257,7 @@ void Interpreter::executeCycle()
 				{
 					m_V[0xF] = 1;
 				}
-				if (xCord > 63)
+				if (xCord >= 63)
 				{
 					xCord = 0;
 				}

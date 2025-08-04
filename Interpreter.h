@@ -18,7 +18,7 @@ public:
 
 	uint16_t fetchOpcode(uint8_t highByte, uint8_t lowByte);
 
-	void executeCycle();
+	void executeCycles(int cycles);
 
 	uint8_t randomNumber();
 

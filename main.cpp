@@ -26,6 +26,9 @@ int main(int argc, char* args[])
 	Texture texture{};
 	bool quit{ false };
 	SDL_Event e;
+
+	LTim
+
 	while (!quit)
 	{
 		while (SDL_PollEvent(&e) != 0)
@@ -150,7 +153,7 @@ int main(int argc, char* args[])
 		SDL_SetRenderDrawColor(g_Renderer, 0x00, 0x00, 0x00, 0x00);
 		SDL_RenderClear(g_Renderer);
 
-		interpreter.executeCycle();
+		interpreter.executeCycles(500);
 		interpreter.decreaseDT();
 		interpreter.decreaseST();
 		texture.updateTexture();

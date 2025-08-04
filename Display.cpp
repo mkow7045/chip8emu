@@ -20,8 +20,6 @@ Display::Display(int ScreenWidth, int ScreenHeight)
 		}
 		else
 		{
-			SDL_SetRenderVSync(g_Renderer, 1);
-
 			SDL_SetRenderDrawColor(g_Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		}
 	}
