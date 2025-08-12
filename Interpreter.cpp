@@ -195,7 +195,7 @@ void Interpreter::executeCycles(int cycles)
 				break;
 			case 0x7:
 				temp16 = m_V[opcode.y()] - m_V[opcode.x()];
-				if (m_V[opcode.x()] > m_V[opcode.y()])
+				if (m_V[opcode.y()] > m_V[opcode.x()])
 				{
 					m_V[0xF] = 1;
 				}

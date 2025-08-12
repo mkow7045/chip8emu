@@ -40,6 +40,8 @@ public:
 		}
 	}
 
+	uint8_t getST() const{ return m_ST; }
+
 private:
 	std::string m_Path{};
 	std::array<uint8_t, 4096> m_Mem{};

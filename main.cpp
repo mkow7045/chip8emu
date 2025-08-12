@@ -36,6 +36,13 @@ int main(int argc, char* args[])
 	constexpr int ticksPerFrame = 1000 / framerate;
 	Uint64 lastTimerUpdate{ 0 };
 
+	Mix_Music* music{ nullptr };
+	music = Mix_LoadMUS("beep.wav");
+	if (music == NULL)
+	{
+		SDL_Log("Failed to load beat music! SDL_mixer Error: %s\n", SDL_GetError());
+	}
+
 	int countedFrames{ 0 };
 	fpsTimer.start();
 	
@@ -166,6 +173,14 @@ int main(int argc, char* args[])
 		{
 			interpreter.decreaseDT();
 			interpreter.decreaseST();
+			if (interpreter.getST() > 0)
+			{
+				Mix_PlayMusic(music, -1);
+			}
+			else
+			{
+				Mix_HaltMusic();
+			}
 			lastTimerUpdate += 1000 / 60;
 		}
 

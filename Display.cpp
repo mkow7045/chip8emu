@@ -20,7 +20,16 @@ Display::Display(int ScreenWidth, int ScreenHeight)
 		}
 		else
 		{
+			SDL_AudioSpec audio_spec;
 			SDL_SetRenderDrawColor(g_Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+			SDL_zero(audio_spec);
+			audio_spec.format = MIX_DEFAULT_FORMAT;
+			audio_spec.channels = 2;
+			audio_spec.freq = 44100;
+			if (!Mix_OpenAudio(0, &audio_spec))
+			{
+				SDL_Log("SDL_mixer could not initialize! SDL_mixer Error: %s\n", SDL_GetError());
+			}
 		}
 	}
 }
