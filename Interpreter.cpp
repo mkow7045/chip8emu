@@ -242,6 +242,7 @@ void Interpreter::executeCycles(int cycles)
 
 		case 0xD:
 		{
+			m_V[0xF] = 0;
 			for (int index{ 0 }; index < opcode.n(); ++index)
 			{
 				if (m_I + index >= m_Mem.size()) break;
@@ -253,29 +254,18 @@ void Interpreter::executeCycles(int cycles)
 				uint8_t xCord{ m_V[opcode.x()] };
 				for (int bit{ 7 }; bit >= 0; --bit)
 				{
-					bool pixelChanged{ g_Display[xCord][yCord] };
-					g_Display[xCord][yCord] ^= (1 << bit) & m_Sprite[index];
-					if (pixelChanged != g_Display[xCord][yCord])
+					bool spritePixel = (m_Sprite[index] >> bit) & 1;
+					if (spritePixel)
 					{
-						m_V[0xF] = 1;
+						if (g_Display[xCord][yCord])
+						{
+							m_V[0xF] = 1;
+						}
+						g_Display[xCord][yCord] ^= 1;
 					}
-					if (xCord >= 63)
-					{
-						xCord = 0;
-					}
-					else
-					{
-						++xCord;
-					}
+					xCord = (xCord + 1) % 64;
 				}
-				if (yCord > 31)
-				{
-					yCord = 0;
-				}
-				else
-				{
-					++yCord;
-				}
+				yCord = (yCord + 1) % 32;
 			}
 		}
 		break;

@@ -172,7 +172,7 @@ int main(int argc, char* args[])
 		SDL_SetRenderDrawColor(g_Renderer, 0x00, 0x00, 0x00, 0x00);
 		SDL_RenderClear(g_Renderer);
 
-		interpreter.executeCycles(500);
+		interpreter.executeCycles(8);
 		
 		texture.updateTexture();
 		texture.render(0, 0);
