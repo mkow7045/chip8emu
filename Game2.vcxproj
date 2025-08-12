@@ -136,6 +136,7 @@
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Opcode.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
@@ -143,6 +144,7 @@
     <ClInclude Include="Opcode.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Display.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

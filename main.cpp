@@ -1,6 +1,7 @@
 #include "Common.h"
 #include "Display.h"
 #include "Texture.h"
+#include "Timer.h"
 #include "Interpreter.h"
 #include <array>
 #include <iostream>
@@ -16,7 +17,7 @@ std::array<std::array<bool, 32>, 64> g_Display{};
 int main(int argc, char* args[])
 {
 	std::string ibm{ "space_invaders.ch8" };
-	Interpreter interpreter{ibm};
+	Interpreter interpreter{ ibm };
 	if (!interpreter.readFromFile())
 	{
 		return 0;
@@ -27,10 +28,20 @@ int main(int argc, char* args[])
 	bool quit{ false };
 	SDL_Event e;
 
-	LTim
+	Timer fpsTimer{};
 
+	Timer capTimer{};
+
+	constexpr int framerate = 60;
+	constexpr int ticksPerFrame = 1000 / framerate;
+	Uint64 lastTimerUpdate{ 0 };
+
+	int countedFrames{ 0 };
+	fpsTimer.start();
+	
 	while (!quit)
 	{
+		capTimer.start();
 		while (SDL_PollEvent(&e) != 0)
 		{
 			if (e.type == SDL_EVENT_QUIT)
@@ -150,16 +161,30 @@ int main(int argc, char* args[])
 		}
 
 
+		Uint32 now = fpsTimer.getTicks();
+		while(now - lastTimerUpdate >= 1000 / 60) 
+		{
+			interpreter.decreaseDT();
+			interpreter.decreaseST();
+			lastTimerUpdate += 1000 / 60;
+		}
+
 		SDL_SetRenderDrawColor(g_Renderer, 0x00, 0x00, 0x00, 0x00);
 		SDL_RenderClear(g_Renderer);
 
 		interpreter.executeCycles(500);
-		interpreter.decreaseDT();
-		interpreter.decreaseST();
+		
 		texture.updateTexture();
 		texture.render(0, 0);
 
 		SDL_RenderPresent(g_Renderer);
+		++countedFrames;
+
+		int frameTicks = capTimer.getTicks();
+		if (frameTicks < ticksPerFrame)
+		{
+			SDL_Delay(ticksPerFrame - frameTicks);
+		}
 
 	}
 	return 0;

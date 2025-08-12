@@ -26,12 +26,18 @@ public:
 
 	void decreaseDT()
 	{
-		--m_DT;
+		if (m_DT > 0)
+		{
+			--m_DT;
+		}
 	}
 
 	void decreaseST()
 	{
-		--m_ST;
+		if (m_ST > 0)
+		{
+			--m_ST;
+		}
 	}
 
 private:
