@@ -2,6 +2,7 @@
 #define INTERPRETER_H
 
 #include "Common.h"
+#include "Opcode.h"
 #include <array>
 #include <string>
 #include <string_view>
@@ -22,8 +23,6 @@ public:
 
 	uint8_t randomNumber();
 
-	void setKey(uint8_t key);
-
 	void decreaseDT()
 	{
 		if (m_DT > 0)
@@ -40,7 +39,11 @@ public:
 		}
 	}
 
+	void debug(Opcode opcode);
+
 	uint8_t getST() const{ return m_ST; }
+
+	void setKey(uint8_t index, bool state);
 
 private:
 	std::string m_Path{};

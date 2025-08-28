@@ -16,18 +16,6 @@ Interpreter::Interpreter(std::string& path)
 {
 }
 
-void Interpreter::setKey(uint8_t key)
-{
-	if (m_Keyboard[key] == false)
-	{
-		m_Keyboard[key] = true;
-	}
-	else
-	{
-		m_Keyboard[key] = false;
-	}
-}
-
 bool Interpreter::readFromFile()
 {
 	constexpr size_t programStart{ 0x200 };
@@ -77,13 +65,32 @@ uint8_t Interpreter::randomNumber()
 	return die255(mt);
 }
 
+void Interpreter::debug(Opcode opcode)
+{
+	std::cerr << "0x" << std::hex << std::setw(4) << std::setfill('0') << opcode.full() << " ON BYTE NUMBER " << std::dec << m_PC << '\n';
+	std::cerr << "Regiser values:\n";
+	for (int index{ 0 }; index < m_V.size(); ++index)
+	{
+		std::cerr << "V[" << index << "]: " << std::hex << m_V[index] << '\n';
+	}
+
+	std::cerr << std::hex << "V[I]" << m_I << '\n';
+	//clear screen
+	std::cout << "\033[2J\033[1;1H";
+}
+
+void Interpreter::setKey(uint8_t index, bool state)
+{
+	m_Keyboard[index] = state;
+}
+
 void Interpreter::executeCycles(int cycles)
 {
 	for (int i{ 0 }; i < cycles; ++i)
 	{
 		Opcode opcode{ fetchOpcode(m_Mem[m_PC], m_Mem[m_PC + 1]) };
 
-		// std::cerr << "0x" << std::hex << std::setw(4) << std::setfill('0') << opcode.full() << " ON BYTE NUMBER " << std::dec << m_PC << '\n';
+		//debug(opcode);
 
 		bool incrementPC{ true };
 
@@ -180,7 +187,7 @@ void Interpreter::executeCycles(int cycles)
 				{
 					m_V[0xF] = 0;
 				}
-				m_V[opcode.x()] = temp16;
+				m_V[opcode.x()] = static_cast<uint8_t>(temp16);
 				break;
 			case 0x6:
 				if (m_V[opcode.x()] & 0x1)
@@ -203,7 +210,7 @@ void Interpreter::executeCycles(int cycles)
 				{
 					m_V[0xF] = 0;
 				}
-				m_V[opcode.x()] = temp16;
+				m_V[opcode.x()] = static_cast<uint8_t>(temp16);
 				break;
 			case 0xE:
 				if (m_V[opcode.x()] & 0b10000000)
@@ -257,11 +264,14 @@ void Interpreter::executeCycles(int cycles)
 					bool spritePixel = (m_Sprite[index] >> bit) & 1;
 					if (spritePixel)
 					{
-						if (g_Display[xCord][yCord])
+						if (xCord < 64 && yCord < 32)
 						{
-							m_V[0xF] = 1;
+							if (g_Display[xCord][yCord])
+							{
+								m_V[0xF] = 1;
+							}
+							g_Display[xCord][yCord] ^= 1;
 						}
-						g_Display[xCord][yCord] ^= 1;
 					}
 					xCord = (xCord + 1) % 64;
 				}
@@ -298,6 +308,7 @@ void Interpreter::executeCycles(int cycles)
 					{
 						m_V[opcode.x()] = index;
 						incrementPC = true;
+						break;
 					}
 				}
 			}
@@ -320,13 +331,13 @@ void Interpreter::executeCycles(int cycles)
 				m_Mem[m_I + 2] = m_V[opcode.x()] % 10;
 				break;
 			case 0x55:
-				for (int index{ 0 }; index < opcode.x(); ++index)
+				for (int index{ 0 }; index <= opcode.x(); ++index)
 				{
 					m_Mem[m_I + index] = m_V[index];
 				}
 				break;
 			case 0x65:
-				for (int index{ 0 }; index < opcode.x(); ++index)
+				for (int index{ 0 }; index <= opcode.x(); ++index)
 				{
 					m_V[index] = m_Mem[m_I + index];
 				}
