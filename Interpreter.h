@@ -23,21 +23,9 @@ public:
 
 	uint8_t randomNumber();
 
-	void decreaseDT()
-	{
-		if (m_DT > 0)
-		{
-			--m_DT;
-		}
-	}
+	void decreaseDT();
 
-	void decreaseST()
-	{
-		if (m_ST > 0)
-		{
-			--m_ST;
-		}
-	}
+	void decreaseST();
 
 	void debug(Opcode opcode);
 

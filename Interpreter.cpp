@@ -65,6 +65,22 @@ uint8_t Interpreter::randomNumber()
 	return die255(mt);
 }
 
+void Interpreter::decreaseDT()
+{
+	if (m_DT > 0)
+	{
+		--m_DT;
+	}
+}
+
+void Interpreter::decreaseST()
+{
+	if (m_ST > 0)
+	{
+		--m_ST;
+	}
+}
+
 void Interpreter::debug(Opcode opcode)
 {
 	std::cerr << "0x" << std::hex << std::setw(4) << std::setfill('0') << opcode.full() << " ON BYTE NUMBER " << std::dec << m_PC << '\n';
