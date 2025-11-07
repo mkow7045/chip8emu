@@ -24,6 +24,7 @@ git clone https://github.com/mkow7045/chip8emu.git
 cd chip8emu
 make
 ./chip8emu <path-to-rom.ch8>
+```
 
 
 <img width="633" height="475" alt="obraz" src="https://github.com/user-attachments/assets/13e303a9-a226-4678-a1db-c293f70dea70" />
