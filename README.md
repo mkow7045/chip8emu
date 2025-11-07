@@ -1,9 +1,9 @@
 # CHIP-8 Emulator (SDL3)  
-*A desktop implementation of the CHIP-8 language written in C++ and SDL3.*  
+*A CHIP-8 emulator written in C++ and SDL3.*  
 
 ## Overview  
-This project implements a full CHIP-8 interpreter, running on desktop platforms using the SDL3 library for graphics, input and sound.  
-The same core emulator logic is later ported to an embedded target (see the STM32 version [here](https://github.com/mkow7045/chip8emu-stm32)).  
+This project implements a full CHIP-8 emulator, running on desktop platforms using the SDL3 library for graphics, input and sound.  
+The same core emulator logic has been ported to an embedded target (see the STM32 version [here](https://github.com/mkow7045/chip8emu-stm32)).  
 
 ## Features  
 - Full CHIP-8 instruction set  
