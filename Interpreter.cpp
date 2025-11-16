@@ -18,6 +18,10 @@ Interpreter::Interpreter(std::string& path)
 
 bool Interpreter::readFromFile()
 {
+	for (int i{ 0 }; i < 80; ++i)
+	{
+		m_Mem[0x50 + i] = chip8_fontset[i];
+	}
 	constexpr size_t programStart{ 0x200 };
 	std::ifstream inf{ m_Path.c_str(), std::ios::binary };
 
@@ -339,7 +343,7 @@ void Interpreter::executeCycles(int cycles)
 				m_I += m_V[opcode.x()];
 				break;
 			case 0x29:
-				// add this later
+				m_I = (m_V[opcode.x()] * 5) + 0x50;
 				break;
 			case 0x33:
 				m_Mem[m_I] = (m_V[opcode.x()] / 100) % 10;
