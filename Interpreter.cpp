@@ -9,6 +9,7 @@
 #include <bitset>
 #include <iomanip>
 #include <random>
+#include <filesystem>
 
 
 Interpreter::Interpreter(std::string& path)
@@ -23,27 +24,18 @@ bool Interpreter::readFromFile()
 		m_Mem[0x50 + i] = chip8_fontset[i];
 	}
 	constexpr size_t programStart{ 0x200 };
-	std::ifstream inf{ m_Path.c_str(), std::ios::binary };
+	std::ifstream inf{ m_Path, std::ios::binary };
+	auto size = std::filesystem::file_size(m_Path);
+	const auto maxMem = m_Mem.size() - programStart;
 
-	if (!inf)
+	if (!inf || size > maxMem) 
 	{
 		std::cerr << "Error opening file!\n";
 		return false;
 	}
 
-	auto startIt{ m_Mem.begin() + programStart };
-	auto endIt{ m_Mem.end() };
+	inf.read(reinterpret_cast<char*>(&m_Mem[programStart]), size);
 
-	auto bytesCopied = std::copy(
-		std::istreambuf_iterator<char>(inf),
-		std::istreambuf_iterator<char>(),
-		startIt);
-
-	if (std::distance(startIt, bytesCopied) > (m_Mem.size() - 0x200))
-	{
-		std::cerr << "ROM is too large\n";
-		return false;
-	}
 	return true;
 }
 
